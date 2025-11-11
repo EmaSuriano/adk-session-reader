@@ -1,0 +1,173 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Light theme colors - Google Material Design */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #e8eaed;
+  --text-primary: #202124;
+  --text-secondary: #5f6368;
+  --text-tertiary: #80868b;
+  --border-color: #dadce0;
+  --border-color-light: #e8eaed;
+  --shadow-sm: rgba(60, 64, 67, 0.15);
+  --shadow-md: rgba(60, 64, 67, 0.3);
+  --shadow-lg: rgba(60, 64, 67, 0.4);
+
+  /* Google Brand Colors */
+  --google-blue: #4285f4;
+  --google-red: #ea4335;
+  --google-yellow: #fbbc04;
+  --google-green: #34a853;
+
+  /* Message backgrounds */
+  --msg-user-bg: linear-gradient(135deg, #e8f0fe 0%, #d2e3fc 100%);
+  --msg-model-bg: #ffffff;
+  --msg-user-border: #4285f4;
+  --msg-model-border: #34a853;
+
+  /* Function call colors */
+  --function-call-color: #fbbc04;
+  --function-response-color: #34a853;
+  --function-bg: #f8f9fa;
+  --function-border: #dadce0;
+  --function-text: #202124;
+
+  /* Upload screen */
+  --upload-gradient: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+  --drop-zone-border: #dadce0;
+  --drop-zone-bg: linear-gradient(135deg, #f8f9fa 0%, #e8eaed 100%);
+  --drop-zone-hover-bg: linear-gradient(135deg, #e8f0fe 0%, #d2e3fc 100%);
+  --drop-zone-drag-bg: linear-gradient(135deg, #d2e3fc 0%, #aecbfa 100%);
+
+  /* Theme toggle */
+  --theme-toggle-bg: rgba(255, 255, 255, 0.95);
+  --theme-toggle-border: #dadce0;
+  --theme-toggle-icon: #5f6368;
+  --theme-toggle-shadow: rgba(60, 64, 67, 0.3);
+  --theme-toggle-shadow-hover: rgba(60, 64, 67, 0.5);
+
+  color-scheme: light;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+}
+
+[data-theme='dark'] {
+  /* Dark theme colors - Google Material Design Dark */
+  --bg-primary: #202124;
+  --bg-secondary: #292a2d;
+  --bg-tertiary: #35363a;
+  --text-primary: #e8eaed;
+  --text-secondary: #9aa0a6;
+  --text-tertiary: #5f6368;
+  --border-color: #3c4043;
+  --border-color-light: #5f6368;
+  --shadow-sm: rgba(0, 0, 0, 0.3);
+  --shadow-md: rgba(0, 0, 0, 0.4);
+  --shadow-lg: rgba(0, 0, 0, 0.5);
+
+  /* Google Brand Colors (adjusted for dark mode) */
+  --google-blue: #8ab4f8;
+  --google-red: #f28b82;
+  --google-yellow: #fdd663;
+  --google-green: #81c995;
+
+  /* Message backgrounds */
+  --msg-user-bg: linear-gradient(135deg, #1a3a52 0%, #1e4a6b 100%);
+  --msg-model-bg: #292a2d;
+  --msg-user-border: #8ab4f8;
+  --msg-model-border: #81c995;
+
+  /* Function call colors */
+  --function-call-color: #fdd663;
+  --function-response-color: #81c995;
+  --function-bg: #292a2d;
+  --function-border: #3c4043;
+  --function-text: #e8eaed;
+
+  /* Upload screen */
+  --upload-gradient: linear-gradient(135deg, #1a73e8 0%, #188038 100%);
+  --drop-zone-border: #5f6368;
+  --drop-zone-bg: linear-gradient(135deg, #292a2d 0%, #35363a 100%);
+  --drop-zone-hover-bg: linear-gradient(135deg, #1a3a52 0%, #1e4a6b 100%);
+  --drop-zone-drag-bg: linear-gradient(135deg, #1e4a6b 0%, #2563a8 100%);
+
+  /* Theme toggle */
+  --theme-toggle-bg: rgba(41, 42, 45, 0.95);
+  --theme-toggle-border: #5f6368;
+  --theme-toggle-icon: #e8eaed;
+  --theme-toggle-shadow: rgba(0, 0, 0, 0.3);
+  --theme-toggle-shadow-hover: rgba(0, 0, 0, 0.5);
+
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: 600;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+code {
+  font-family: 'Monaco', 'Courier New', monospace;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color-light);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
