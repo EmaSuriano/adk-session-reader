@@ -2,6 +2,13 @@
 
 A beautiful and modern web application to view and explore Google Agent Development Kit (ADK) conversation sessions. This viewer allows you to visualize agent conversations, function calls, and responses in an intuitive chat-like interface.
 
+## Screenshots
+
+| Screen         | Light Theme                               | Dark Theme                               |
+| -------------- | ----------------------------------------- | ---------------------------------------- |
+| Home Screen    | ![Home](screenshots/home-light.png)       | ![Home](screenshots/home-dark.png)       |
+| Session Viewer | ![Session](screenshots/session-light.png) | ![Session](screenshots/session-dark.png) |
+
 ## Features
 
 - 🎯 **Drag & Drop Interface** - Simply drag and drop your session JSON files

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FileUpload } from './components/FileUpload';
 import { SessionViewer } from './components/SessionViewer';
 import { ThemeToggle } from './components/ThemeToggle';
+import { Footer } from './components/Footer';
 import type { ADKSession } from './types/session';
 import './App.css';
 
@@ -39,9 +40,13 @@ function App() {
             </p>
           </div>
           <FileUpload onSessionLoad={handleSessionLoad} />
+          <Footer />
         </div>
       ) : (
-        <SessionViewer session={session} onReset={handleReset} />
+        <>
+          <SessionViewer session={session} onReset={handleReset} />
+          <Footer />
+        </>
       )}
     </div>
   );

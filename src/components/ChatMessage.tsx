@@ -15,13 +15,10 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
   const isUser = content.role === 'user' && author === 'user';
   const isModel = content.role === 'model';
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   // Check if this message contains only function calls/responses (no text)
-  const hasOnlyFunctions = content.parts.every(part => 
-    part.functionCall || part.functionResponse
-  );
-  const hasFunctions = content.parts.some(part => 
-    part.functionCall || part.functionResponse
+  const hasOnlyFunctions = content.parts.every(
+    (part) => part.functionCall || part.functionResponse,
   );
 
   const formatTimestamp = (ts: number) => {
@@ -59,18 +56,23 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
       if (part.functionCall) {
         return (
           <div key={index} className="function-call">
-            <button 
+            <button
               className="function-header function-toggle"
               onClick={() => setIsExpanded(!isExpanded)}
               aria-expanded={isExpanded}
             >
-              <svg 
+              <svg
                 className={`chevron-icon ${isExpanded ? 'expanded' : ''}`}
-                viewBox="0 0 24 24" 
-                fill="none" 
+                viewBox="0 0 24 24"
+                fill="none"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path
@@ -85,8 +87,8 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
             </button>
             {isExpanded && (
               <div className="function-args">
-                <JsonView 
-                  data={part.functionCall.args} 
+                <JsonView
+                  data={part.functionCall.args}
                   shouldExpandNode={(level) => level < 2}
                   style={{
                     ...defaultStyles,
@@ -111,18 +113,23 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
       if (part.functionResponse) {
         return (
           <div key={index} className="function-response">
-            <button 
+            <button
               className="function-header function-toggle"
               onClick={() => setIsExpanded(!isExpanded)}
               aria-expanded={isExpanded}
             >
-              <svg 
+              <svg
                 className={`chevron-icon ${isExpanded ? 'expanded' : ''}`}
-                viewBox="0 0 24 24" 
-                fill="none" 
+                viewBox="0 0 24 24"
+                fill="none"
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path
@@ -139,8 +146,8 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
             </button>
             {isExpanded && (
               <div className="function-result">
-                <JsonView 
-                  data={part.functionResponse.response} 
+                <JsonView
+                  data={part.functionResponse.response}
                   shouldExpandNode={(level) => level < 2}
                   style={{
                     ...defaultStyles,
@@ -167,7 +174,9 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
 
   return (
     <div
-      className={`chat-message ${isUser ? 'user-message' : 'model-message'} ${hasOnlyFunctions ? 'function-only-message' : ''}`}
+      className={`chat-message ${isUser ? 'user-message' : 'model-message'} ${
+        hasOnlyFunctions ? 'function-only-message' : ''
+      }`}
     >
       <div className="message-header">
         <div className="author-info">
