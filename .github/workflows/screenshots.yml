@@ -27,20 +27,21 @@ jobs:
 
       - name: Build project
         run: yarn build
+        # Note: Building without base path for screenshots
 
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
 
       - name: Serve built app
         run: |
-          npx serve -s dist -l 3000 &
+          npx vite preview --port 3000 --host &
           SERVER_PID=$!
           echo "Server PID: $SERVER_PID"
-          echo "Waiting for server to start..."
-          sleep 8
+          echo "Waiting for Vite preview server to start..."
+          sleep 10
 
           # Check if server is responding
-          for i in {1..5}; do
+          for i in {1..10}; do
             if curl -f http://localhost:3000 > /dev/null 2>&1; then
               echo "✅ Server is ready!"
               break
@@ -51,6 +52,8 @@ jobs:
 
           # Verify server is actually running
           curl -I http://localhost:3000 || (echo "❌ Server not responding" && exit 1)
+          echo "🌐 Testing base path..."
+          curl -I http://localhost:3000/adk-session-reader/ || echo "⚠️  Base path not found (might be OK for preview)"
 
       - name: Take screenshots
         run: npx tsx scripts/take-screenshots.ts
