@@ -20,9 +20,10 @@ async function waitForAnimation(page: Page, ms: number = 500): Promise<void> {
 }
 
 async function toggleTheme(page: Page): Promise<void> {
-  const themeButton = page.locator('button.theme-toggle').first();
+  const themeButton = page.locator('button.theme-toggle');
+  await themeButton.waitFor({ state: 'visible', timeout: 10000 });
   await themeButton.click();
-  await waitForAnimation(page);
+  await waitForAnimation(page, 800);
 }
 
 async function loadExampleSession(page: Page): Promise<void> {
@@ -45,7 +46,10 @@ async function loadExampleSession(page: Page): Promise<void> {
   // Upload the file
   const fileInput = page.locator('input[type="file"]');
   await fileInput.setInputFiles(tempFilePath);
-  await page.waitForTimeout(2000); // Wait for session to load
+
+  // Wait for session viewer to appear
+  await page.waitForSelector('.session-viewer', { timeout: 10000 });
+  await page.waitForTimeout(2000); // Wait for animations and content to load
 
   // Clean up temp file
   fs.unlinkSync(tempFilePath);
@@ -65,16 +69,45 @@ async function takeScreenshots(): Promise<void> {
   let browser: Browser | null = null;
 
   try {
-    browser = await chromium.launch();
+    browser = await chromium.launch({
+      headless: true,
+    });
     const context = await browser.newContext({
       viewport: VIEWPORT,
+      deviceScaleFactor: 1,
     });
     const page = await context.newPage();
 
+    // Enable console logging from the page
+    page.on('console', (msg) => console.log('PAGE LOG:', msg.text()));
+    page.on('pageerror', (error) => console.error('PAGE ERROR:', error));
+
     // Navigate to the app
     console.log('📱 Navigating to app...');
-    await page.goto(BASE_URL, { waitUntil: 'networkidle' });
-    await waitForAnimation(page, 1000);
+    console.log(`🌐 URL: ${BASE_URL}`);
+
+    try {
+      await page.goto(BASE_URL, { waitUntil: 'networkidle', timeout: 60000 });
+    } catch (error) {
+      console.error('Failed to load page:', error);
+      throw error;
+    }
+
+    // Wait for the main content to be visible
+    console.log('⏳ Waiting for upload screen...');
+    await page.waitForSelector('.upload-screen', { timeout: 10000 });
+
+    // Wait for theme toggle to be visible
+    console.log('⏳ Waiting for theme toggle...');
+    await page.waitForSelector('.theme-toggle', { timeout: 10000 });
+
+    await waitForAnimation(page, 1500);
+    console.log('✅ Page loaded successfully');
+
+    // Debug: Take a test screenshot to verify page loaded
+    const debugScreenshot = path.join(SCREENSHOTS_DIR, 'debug-initial.png');
+    await page.screenshot({ path: debugScreenshot });
+    console.log('🔍 Debug screenshot saved:', debugScreenshot);
 
     // Screenshot 1: Home - Light Theme
     await takeScreenshot(page, 'home-light.png');

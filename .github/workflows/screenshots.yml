@@ -34,10 +34,36 @@ jobs:
       - name: Serve built app
         run: |
           npx serve -s dist -l 3000 &
-          sleep 5
+          SERVER_PID=$!
+          echo "Server PID: $SERVER_PID"
+          echo "Waiting for server to start..."
+          sleep 8
+
+          # Check if server is responding
+          for i in {1..5}; do
+            if curl -f http://localhost:3000 > /dev/null 2>&1; then
+              echo "✅ Server is ready!"
+              break
+            fi
+            echo "Attempt $i: Server not ready yet..."
+            sleep 2
+          done
+
+          # Verify server is actually running
+          curl -I http://localhost:3000 || (echo "❌ Server not responding" && exit 1)
 
       - name: Take screenshots
         run: npx tsx scripts/take-screenshots.ts
+
+      - name: Debug on failure
+        if: failure()
+        run: |
+          echo "📋 Checking if server is still running..."
+          curl -I http://localhost:3000 || echo "Server is not running"
+          echo "📁 Listing dist directory..."
+          ls -la dist/
+          echo "📁 Checking screenshots directory..."
+          ls -la screenshots/ || echo "No screenshots directory"
 
       - name: Upload screenshots as artifact
         uses: actions/upload-artifact@v4
