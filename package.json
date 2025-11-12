@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "screenshots": "yarn build && vite preview --port 3000 & sleep 8 && tsx scripts/take-screenshots.ts && kill %1"
+    "screenshots": "yarn build && vite preview --port 3000 & sleep 8 && tsx scripts/take-screenshots.ts"
   },
   "dependencies": {
     "react": "^19.2.0",
