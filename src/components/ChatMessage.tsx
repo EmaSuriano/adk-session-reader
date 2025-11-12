@@ -1,4 +1,9 @@
+import { useState } from 'react';
 import type { SessionEvent } from '../types/session';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { JsonView, defaultStyles } from 'react-json-view-lite';
+import 'react-json-view-lite/dist/index.css';
 import './ChatMessage.css';
 
 interface ChatMessageProps {
@@ -9,6 +14,15 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
   const { content, author, timestamp } = event;
   const isUser = content.role === 'user' && author === 'user';
   const isModel = content.role === 'model';
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  // Check if this message contains only function calls/responses (no text)
+  const hasOnlyFunctions = content.parts.every(part => 
+    part.functionCall || part.functionResponse
+  );
+  const hasFunctions = content.parts.some(part => 
+    part.functionCall || part.functionResponse
+  );
 
   const formatTimestamp = (ts: number) => {
     const date = new Date(ts * 1000);
@@ -34,7 +48,9 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
       if (part.text && isModel) {
         return (
           <div key={index} className="message-text markdown-content">
-            {formatMarkdown(part.text)}
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {part.text}
+            </ReactMarkdown>
           </div>
         );
       }
@@ -43,7 +59,19 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
       if (part.functionCall) {
         return (
           <div key={index} className="function-call">
-            <div className="function-header">
+            <button 
+              className="function-header function-toggle"
+              onClick={() => setIsExpanded(!isExpanded)}
+              aria-expanded={isExpanded}
+            >
+              <svg 
+                className={`chevron-icon ${isExpanded ? 'expanded' : ''}`}
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path
                   strokeLinecap="round"
@@ -53,10 +81,28 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
                 />
               </svg>
               <span className="function-name">{part.functionCall.name}</span>
-            </div>
-            <div className="function-args">
-              <pre>{JSON.stringify(part.functionCall.args, null, 2)}</pre>
-            </div>
+              <span className="function-badge">Function Call</span>
+            </button>
+            {isExpanded && (
+              <div className="function-args">
+                <JsonView 
+                  data={part.functionCall.args} 
+                  shouldExpandNode={(level) => level < 2}
+                  style={{
+                    ...defaultStyles,
+                    container: 'json-container',
+                    label: 'json-label',
+                    nullValue: 'json-null',
+                    undefinedValue: 'json-undefined',
+                    numberValue: 'json-number',
+                    stringValue: 'json-string',
+                    booleanValue: 'json-boolean',
+                    otherValue: 'json-other',
+                    punctuation: 'json-punctuation',
+                  }}
+                />
+              </div>
+            )}
           </div>
         );
       }
@@ -65,7 +111,19 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
       if (part.functionResponse) {
         return (
           <div key={index} className="function-response">
-            <div className="function-header">
+            <button 
+              className="function-header function-toggle"
+              onClick={() => setIsExpanded(!isExpanded)}
+              aria-expanded={isExpanded}
+            >
+              <svg 
+                className={`chevron-icon ${isExpanded ? 'expanded' : ''}`}
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path
                   strokeLinecap="round"
@@ -75,14 +133,30 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
                 />
               </svg>
               <span className="function-name">
-                {part.functionResponse.name} Response
+                {part.functionResponse.name}
               </span>
-            </div>
-            <div className="function-result">
-              <pre>
-                {JSON.stringify(part.functionResponse.response, null, 2)}
-              </pre>
-            </div>
+              <span className="function-badge">Response</span>
+            </button>
+            {isExpanded && (
+              <div className="function-result">
+                <JsonView 
+                  data={part.functionResponse.response} 
+                  shouldExpandNode={(level) => level < 2}
+                  style={{
+                    ...defaultStyles,
+                    container: 'json-container',
+                    label: 'json-label',
+                    nullValue: 'json-null',
+                    undefinedValue: 'json-undefined',
+                    numberValue: 'json-number',
+                    stringValue: 'json-string',
+                    booleanValue: 'json-boolean',
+                    otherValue: 'json-other',
+                    punctuation: 'json-punctuation',
+                  }}
+                />
+              </div>
+            )}
           </div>
         );
       }
@@ -91,24 +165,9 @@ export const ChatMessage = ({ event }: ChatMessageProps) => {
     });
   };
 
-  const formatMarkdown = (text: string) => {
-    // Simple markdown formatting
-    const lines = text.split('\n');
-    return lines.map((line, i) => {
-      // Bold
-      line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-      // Italic
-      line = line.replace(/\*(.*?)\*/g, '<em>$1</em>');
-
-      return (
-        <div key={i} dangerouslySetInnerHTML={{ __html: line || '<br/>' }} />
-      );
-    });
-  };
-
   return (
     <div
-      className={`chat-message ${isUser ? 'user-message' : 'model-message'}`}
+      className={`chat-message ${isUser ? 'user-message' : 'model-message'} ${hasOnlyFunctions ? 'function-only-message' : ''}`}
     >
       <div className="message-header">
         <div className="author-info">
