@@ -7,9 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const SCREENSHOTS_DIR = path.join(__dirname, '..', 'screenshots');
-const BASE_URL = process.env.GITHUB_ACTIONS 
-  ? 'http://localhost:3000/adk-session-reader/' 
-  : 'http://localhost:3000';
+const BASE_URL = 'http://localhost:3000';
 const VIEWPORT = { width: 1440, height: 900 };
 
 // Ensure screenshots directory exists

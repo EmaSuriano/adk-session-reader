@@ -74,15 +74,6 @@ jobs:
           name: screenshots
           path: screenshots/
 
-      - name: Commit screenshots
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add screenshots/
-          git diff --staged --quiet || git commit -m "docs: update screenshots [skip ci]"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@master
+      - uses: stefanzweifel/git-auto-commit-action@v7
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}
+          commit_message: Update screenshots
