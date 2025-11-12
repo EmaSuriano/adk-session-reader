@@ -36,9 +36,6 @@ jobs:
       - name: Take screenshots
         run: yarn screenshots
 
-      - name: Build project
-        run: yarn build
-
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: Update screenshots

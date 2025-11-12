@@ -104,11 +104,6 @@ async function takeScreenshots(): Promise<void> {
     await waitForAnimation(page, 1500);
     console.log('✅ Page loaded successfully');
 
-    // Debug: Take a test screenshot to verify page loaded
-    const debugScreenshot = path.join(SCREENSHOTS_DIR, 'debug-initial.png');
-    await page.screenshot({ path: debugScreenshot });
-    console.log('🔍 Debug screenshot saved:', debugScreenshot);
-
     // Screenshot 1: Home - Light Theme
     await takeScreenshot(page, 'home-light.png');
 
