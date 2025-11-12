@@ -12,6 +12,11 @@ on:
 jobs:
   screenshots:
     runs-on: ubuntu-latest
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
+      contents: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,54 +30,14 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      - name: Build project
-        run: yarn build
-        # Note: Building without base path for screenshots
-
       - name: Install Playwright
         run: npx playwright install --with-deps chromium
 
-      - name: Serve built app
-        run: |
-          npx vite preview --port 3000 --host &
-          SERVER_PID=$!
-          echo "Server PID: $SERVER_PID"
-          echo "Waiting for Vite preview server to start..."
-          sleep 10
-
-          # Check if server is responding
-          for i in {1..10}; do
-            if curl -f http://localhost:3000 > /dev/null 2>&1; then
-              echo "✅ Server is ready!"
-              break
-            fi
-            echo "Attempt $i: Server not ready yet..."
-            sleep 2
-          done
-
-          # Verify server is actually running
-          curl -I http://localhost:3000 || (echo "❌ Server not responding" && exit 1)
-          echo "🌐 Testing base path..."
-          curl -I http://localhost:3000/adk-session-reader/ || echo "⚠️  Base path not found (might be OK for preview)"
-
       - name: Take screenshots
-        run: npx tsx scripts/take-screenshots.ts
+        run: yarn screenshots
 
-      - name: Debug on failure
-        if: failure()
-        run: |
-          echo "📋 Checking if server is still running..."
-          curl -I http://localhost:3000 || echo "Server is not running"
-          echo "📁 Listing dist directory..."
-          ls -la dist/
-          echo "📁 Checking screenshots directory..."
-          ls -la screenshots/ || echo "No screenshots directory"
-
-      - name: Upload screenshots as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: screenshots
-          path: screenshots/
+      - name: Build project
+        run: yarn build
 
       - uses: stefanzweifel/git-auto-commit-action@v7
         with:
